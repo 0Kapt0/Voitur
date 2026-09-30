@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
+using UnityEngine.UIElements;
 
 public class CarController : MonoBehaviour
 {
@@ -31,6 +32,23 @@ public class CarController : MonoBehaviour
     private float _currentBrakeForce;
     private bool _isBraking;
 
+    private CarControls _controls;
+
+    private void Awake()
+    {
+        _controls = new CarControls();
+    }
+
+    private void OnEnable()
+    {
+        _controls.Enable();
+    }
+
+    private void OnDisable()
+    {
+        _controls.Disable();
+    }
+
     private void Start()
     {
         _frontLeftOffset = GetOffset(_frontLeftWheelCollider, _frontLeftWheelTransform);
@@ -48,9 +66,9 @@ public class CarController : MonoBehaviour
 
     private void GetInput()
     {
-        _horizontalInput = Input.GetAxis("Horizontal");
-        _verticalInput = Input.GetAxisRaw("Vertical");
-        _isBraking = Input.GetKey(KeyCode.Space);
+        _horizontalInput = _controls.Car.Steer.ReadValue<float>();
+        _verticalInput = _controls.Car.Throttle.ReadValue<float>();
+        _isBraking = _controls.Car.Brake.IsPressed();
 
     }
 

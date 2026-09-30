@@ -60,14 +60,6 @@
       },
       "url": "https://packages.unity.com"
     },
-    "com.unity.multiplayer.center": {
-      "version": "1.0.1",
-      "depth": 0,
-      "source": "builtin",
-      "dependencies": {
-        "com.unity.modules.uielements": "1.0.0"
-      }
-    },
     "com.unity.performance.profile-analyzer": {
       "version": "1.4.0",
       "depth": 1,
@@ -103,7 +95,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.timeline": {
-      "version": "1.8.12",
+      "version": "1.8.13",
       "depth": 0,
       "source": "registry",
       "dependencies": {
@@ -122,16 +114,6 @@
         "com.unity.modules.ui": "1.0.0",
         "com.unity.modules.imgui": "1.0.0"
       }
-    },
-    "com.unity.visualscripting": {
-      "version": "1.9.12",
-      "depth": 0,
-      "source": "registry",
-      "dependencies": {
-        "com.unity.ugui": "2.0.0",
-        "com.unity.modules.jsonserialize": "1.0.0"
-      },
-      "url": "https://packages.unity.com"
     },
     "com.unity.modules.accessibility": {
       "version": "1.0.0",
