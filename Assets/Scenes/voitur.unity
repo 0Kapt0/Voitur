@@ -890,8 +890,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1434465689}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.03412048, y: 0.00677757, z: 0.0002313941, w: 0.9993948}
-  m_LocalPosition: {x: -0.32999992, y: 1.9790001, z: -4.954}
+  m_LocalRotation: {x: 0.14257944, y: -0.0025896288, z: 0.00037304024, w: 0.98977995}
+  m_LocalPosition: {x: 0, y: 2.1224704, z: -3.3380094}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -984,7 +984,7 @@ Camera:
     height: 1
   near clip plane: 0.3
   far clip plane: 30
-  field of view: 60
+  field of view: 60.000004
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -1136,10 +1136,10 @@ MonoBehaviour:
   curveSmoothness: 0.05
   roadWidth: 12
   textureRepeat: 0.1
-  generateDistance: 300
+  generateDistance: 50
   deleteDistance: 400
   barrierMaterial: {fileID: 2100000, guid: ae37479887c014541bc2b7b14921916f, type: 2}
-  barrierHeight: 0.8
+  barrierHeight: 0.4
   treePrefab: {fileID: 919132149155446097, guid: 4229299ed79db9a4989f0a25d5aa277f, type: 3}
   minTreeSize: 0.7
   maxTreeSize: 2
@@ -1268,7 +1268,6 @@ GameObject:
   - component: {fileID: 1675867756}
   - component: {fileID: 1675867755}
   - component: {fileID: 1675867754}
-  - component: {fileID: 1675867753}
   m_Layer: 6
   m_Name: ground
   m_TagString: Untagged
@@ -1276,27 +1275,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1675867753
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1675867752}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1675867754
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -1322,7 +1300,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: e9a32a5f416df2e478642c6393758132, type: 2}
+  - {fileID: 2100000, guid: ca3ec5e9c0dd1c848b41502373fe25a6, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1363,8 +1341,8 @@ Transform:
   m_GameObject: {fileID: 1675867752}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 5.84544, y: -1.93, z: -1.6581}
-  m_LocalScale: {x: 69.856865, y: 1, z: 81.75099}
+  m_LocalPosition: {x: -119.1, y: -0.57, z: 242.3}
+  m_LocalScale: {x: 780.6638, y: 1, z: 1238.0786}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

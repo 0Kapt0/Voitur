@@ -121,13 +121,13 @@ public class CarController : MonoBehaviour
         if (_isBraking)
         {
             
-            _leftPointLight.intensity = _leftPointLight.intensity * 1.005f;
-            _rightPointLight.intensity = _leftPointLight.intensity * 1.005f;
+            _leftPointLight.intensity = _leftPointLight.intensity * 1.05f;
+            _rightPointLight.intensity = _leftPointLight.intensity * 1.05f;
         }
         else
         {
-            _leftPointLight.intensity = _leftPointLight.intensity * 0.998f;
-            _rightPointLight.intensity = _leftPointLight.intensity * 0.998f;
+            _leftPointLight.intensity = _leftPointLight.intensity * 0.95f;
+            _rightPointLight.intensity = _leftPointLight.intensity * 0.95f;
         }
 
     }
@@ -136,12 +136,12 @@ public class CarController : MonoBehaviour
     {
         GetInput();
         UpdateWheels();
-        TailLight();
     }
 
     private void FixedUpdate()
     {
         HandleMotor();
         HandleSteering();
+        TailLight();
     }
 }
