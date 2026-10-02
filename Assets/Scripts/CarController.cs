@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Experimental.GlobalIllumination;
-using UnityEngine.UIElements;
+//using UnityEngine.UIElements;
+using UnityEngine.UI;
 
 public class CarController : MonoBehaviour
 {
@@ -18,8 +19,14 @@ public class CarController : MonoBehaviour
     public Transform _backLeftWheelTransform;
     public Transform _backRightWheelTransform;
 
+    public AudioSource _radio;
+
+    public Rigidbody _rigidBody;
+
     public Light _leftPointLight;
     public Light _rightPointLight;
+
+    public Image _ArrowSpeed;
 
     private Quaternion _frontLeftOffset;
     private Quaternion _frontRightOffset;
@@ -33,6 +40,8 @@ public class CarController : MonoBehaviour
     private bool _isBraking;
 
     private CarControls _controls;
+
+    private float _carSpeed;
 
     private void Awake()
     {
@@ -99,6 +108,22 @@ public class CarController : MonoBehaviour
         _frontLeftWheelCollider.steerAngle = _currentSteerAngle;
     }
 
+    private void Speedometer()
+    {
+        _carSpeed = _rigidBody.linearVelocity.magnitude;
+
+        float angle = Mathf.Lerp(211.53f, -58.47f, Mathf.Clamp01(_carSpeed / 50f));
+
+        _ArrowSpeed.rectTransform.localRotation =
+            Quaternion.Euler(0f, 0f, angle);
+    }
+
+    private void RadioSpeed()
+    {
+        _carSpeed = _rigidBody.linearVelocity.magnitude;
+        _radio.volume = Mathf.Lerp(Mathf.Clamp(_carSpeed * 0.01f, 0.05f, 0.4f), _radio.volume, Time.deltaTime);
+
+    }
     private void UpdateSingleWheel(WheelCollider wheelCollider, Transform wheelTransform, Quaternion offset)
     {
         wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
@@ -136,6 +161,8 @@ public class CarController : MonoBehaviour
     {
         GetInput();
         UpdateWheels();
+        RadioSpeed();
+        Speedometer();
     }
 
     private void FixedUpdate()
