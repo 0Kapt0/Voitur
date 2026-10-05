@@ -21,9 +21,9 @@ public class CameraFollow : MonoBehaviour
 
     void HandleMovement()
     {
-        //Vector3 targetPos = carTarget.TransformPoint(moveOffset);
+        Vector3 targetPos = carTarget.TransformPoint(moveOffset);
 
-        //transform.position = Vector3.Lerp(transform.position, targetPos, moveSmoothness * Time.deltaTime);
+        transform.position = Vector3.Lerp(transform.position, targetPos, moveSmoothness * Time.deltaTime);
         _cam.fieldOfView = Mathf.Lerp(_cam.fieldOfView, Mathf.Clamp(60 + _rigidBody.linearVelocity.magnitude * 2, 60f, 115f), moveSmoothness * Time.deltaTime);
 
     }

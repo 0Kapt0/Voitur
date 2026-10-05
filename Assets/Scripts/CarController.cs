@@ -26,7 +26,8 @@ public class CarController : MonoBehaviour
     public Light _leftPointLight;
     public Light _rightPointLight;
 
-    public Image _ArrowSpeed;
+    public Image _arrowSpeed;
+    public Image _boy;
 
     private Quaternion _frontLeftOffset;
     private Quaternion _frontRightOffset;
@@ -39,13 +40,13 @@ public class CarController : MonoBehaviour
     private float _currentBrakeForce;
     private bool _isBraking;
 
-    private CarControls _controls;
+    private Controls _controls;
 
     private float _carSpeed;
 
     private void Awake()
     {
-        _controls = new CarControls();
+        _controls = new Controls();
     }
 
     private void OnEnable()
@@ -112,10 +113,11 @@ public class CarController : MonoBehaviour
     {
         _carSpeed = _rigidBody.linearVelocity.magnitude;
 
+        float boyTrans = Mathf.Lerp(-847, -332, Mathf.Clamp01(_carSpeed / 50f));
         float angle = Mathf.Lerp(211.53f, -58.47f, Mathf.Clamp01(_carSpeed / 50f));
 
-        _ArrowSpeed.rectTransform.localRotation =
-            Quaternion.Euler(0f, 0f, angle);
+        _arrowSpeed.rectTransform.localRotation = Quaternion.Euler(0f, 0f, angle);
+        _boy.rectTransform.localPosition = new Vector3(683f, boyTrans, 0f);
     }
 
     private void RadioSpeed()
