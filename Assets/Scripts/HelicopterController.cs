@@ -12,7 +12,6 @@ public class HelicopterController : MonoBehaviour
 
     [Header("Clamp")]
     [SerializeField] private float _maxThrottle = 15f;
-    [SerializeField] private float _maxYaw = 40f;
     [SerializeField] private float _maxPitch = 40f;
     [SerializeField] private float _maxRoll = 40f;
 
@@ -72,10 +71,18 @@ public class HelicopterController : MonoBehaviour
 
     private void HandleRotor()
     {
+        Vector3 rotation = _rigidbody.rotation.eulerAngles;
+
+        float pitch = rotation.x > 180f ? rotation.x - 360f : rotation.x;
+        float roll = rotation.z > 180f ? rotation.z - 360f : rotation.z;
+
+        if (pitch >= _maxPitch && _pitch < 0f || pitch <= -_maxPitch && _pitch > 0f) _rigidbody.angularVelocity = new Vector3(0f, _rigidbody.angularVelocity.y, _rigidbody.angularVelocity.z);
+        if (roll >= _maxRoll && _roll < 0f || roll <= -_maxRoll && _roll > 0f) _rigidbody.angularVelocity = new Vector3(_rigidbody.angularVelocity.x, _rigidbody.angularVelocity.y, 0f);
+
         _rigidbody.AddForce(transform.up * _throttle, ForceMode.Acceleration);
         _rigidbody.AddTorque(-transform.right * _pitch * _responsiveness, ForceMode.Force);
         _rigidbody.AddTorque(-transform.forward * _roll * _responsiveness, ForceMode.Force);
-        _rigidbody.AddTorque(transform.up * _yaw * _responsiveness, ForceMode.Force);
+        _rigidbody.AddTorque(-transform.up * _yaw * _responsiveness, ForceMode.Force);
 
         bool noRotationInput =Mathf.Abs(_pitch) < 0.01f && Mathf.Abs(_roll) < 0.01f && Mathf.Abs(_yaw) < 0.01f;
 
@@ -86,7 +93,7 @@ public class HelicopterController : MonoBehaviour
             Vector3 angularVelocity = _rigidbody.angularVelocity;
 
             Quaternion targetRotation = Quaternion.Euler(startingRotation.x,currentRotation.y,startingRotation.z);
-
+            
             _rigidbody.MoveRotation(Quaternion.Slerp(_rigidbody.rotation,targetRotation,_rotationReturnSpeed * Time.fixedDeltaTime));
 
             angularVelocity.x = Mathf.Lerp(angularVelocity.x,0f,_angularDamping * Time.fixedDeltaTime);

@@ -9,8 +9,8 @@ public class CarScore : MonoBehaviour
     [SerializeField] private TMP_Text multiplierText;
 
     [Header("Réglages du score")]
-    [SerializeField] private float minimumHighSpeed = 50f;
-    [SerializeField] private float pointsPerSecond = 1f;
+    [SerializeField] private float minimumHighSpeed = 25f;
+    [SerializeField] private float pointsPerSecond = 100f;
 
     [Header("Réglages du multiplicateur")]
     [SerializeField] private float multiplierIncreaseTime = 3f;
@@ -40,31 +40,15 @@ public class CarScore : MonoBehaviour
         {
             highSpeedTime += Time.fixedDeltaTime;
 
-            // Le multiplicateur augmente progressivement
-            multiplier = Mathf.Clamp(
-                1f + highSpeedTime / multiplierIncreaseTime,
-                1f,
-                maximumMultiplier
-            );
-
-            // Plus la voiture va vite, plus elle gagne de points
+            multiplier = Mathf.Clamp(1f + highSpeedTime / multiplierIncreaseTime, 1f, maximumMultiplier);
             float speedBonus = speedInKmh / minimumHighSpeed;
-
-            score += pointsPerSecond
-                     * speedBonus
-                     * multiplier
-                     * Time.fixedDeltaTime;
+            score += pointsPerSecond * speedBonus * multiplier * Time.fixedDeltaTime;
         }
         else
         {
             highSpeedTime = 0f;
 
-            // Le multiplicateur redescend progressivement
-            multiplier = Mathf.MoveTowards(
-                multiplier,
-                1f,
-                multiplierDecreaseSpeed * Time.fixedDeltaTime
-            );
+            multiplier = Mathf.MoveTowards(multiplier, 1f, multiplierDecreaseSpeed * Time.fixedDeltaTime);
         }
 
         UpdateUI();

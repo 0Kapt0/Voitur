@@ -542,8 +542,8 @@ MonoBehaviour:
   carRigidbody: {fileID: 259344903}
   scoreText: {fileID: 1429793800}
   multiplierText: {fileID: 1942646188}
-  minimumHighSpeed: 50
-  pointsPerSecond: 1
+  minimumHighSpeed: 25
+  pointsPerSecond: 100
   multiplierIncreaseTime: 3
   maximumMultiplier: 10
   multiplierDecreaseSpeed: 2
@@ -1356,8 +1356,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: Score
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6455b76d132efd0419728682574fa28b, type: 2}
+  m_sharedMaterial: {fileID: 5063178413821030044, guid: 6455b76d132efd0419728682574fa28b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -2129,8 +2129,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: M
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
-  m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 6455b76d132efd0419728682574fa28b, type: 2}
+  m_sharedMaterial: {fileID: 5063178413821030044, guid: 6455b76d132efd0419728682574fa28b, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
