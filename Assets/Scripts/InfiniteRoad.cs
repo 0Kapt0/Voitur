@@ -3,19 +3,21 @@ using UnityEngine;
 
 public class InfiniteRoad : MonoBehaviour
 {
-    [Header("Route")]
+    [Header("Road")]
     public Transform car;
     public Material roadMaterial;
     public int pointsPerChunk = 20;
     public float distanceBetweenPoints = 4f;
     public float curveStrength = 6f;
     public float curveSmoothness = 0.05f;
+    public float maximumTurnAngle = 70f;
     public float roadWidth = 8f;
     public float textureRepeat = 0.1f;
     public float generateDistance = 300f;
     public float deleteDistance = 200f;
 
-    [Header("Décor")]
+    [Header("Decor")]
+    public string wallTag = "Wall";
     public Material barrierMaterial;
     public float barrierHeight = 0.8f;
     public GameObject treePrefab;
@@ -59,27 +61,29 @@ public class InfiniteRoad : MonoBehaviour
         Vector3 startPosition = nextPosition;
         Vector3 localPosition = Vector3.zero;
         Vector3[] vertices = new Vector3[(pointsPerChunk + 1) * 2];
-        Vector2[] uvs = new Vector2[vertices.Length];
+        Vector2[] textureCoordinates = new Vector2[vertices.Length];
         List<int> triangles = new List<int>();
 
-        for (int i = 0; i <= pointsPerChunk; i++)
+        for (int pointNumber = 0; pointNumber <= pointsPerChunk; pointNumber++)
         {
             Vector3 forward = Quaternion.Euler(0, angle, 0) * Vector3.forward;
             Vector3 right = Vector3.Cross(Vector3.up, forward);
 
-            vertices[i * 2] = localPosition - right * roadWidth / 2;
-            vertices[i * 2 + 1] = localPosition + right * roadWidth / 2;
+            vertices[pointNumber * 2] = localPosition - right * roadWidth / 2;
+            vertices[pointNumber * 2 + 1] = localPosition + right * roadWidth / 2;
 
-            float textureY = pointIndex * distanceBetweenPoints * textureRepeat;
-            uvs[i * 2] = new Vector2(0, textureY);
-            uvs[i * 2 + 1] = new Vector2(1, textureY);
+            float textureHeight = pointIndex * distanceBetweenPoints * textureRepeat;
+            textureCoordinates[pointNumber * 2] = new Vector2(0, textureHeight);
+            textureCoordinates[pointNumber * 2 + 1] = new Vector2(1, textureHeight);
 
-            if (i < pointsPerChunk)
+            if (pointNumber < pointsPerChunk)
             {
-                int a = i * 2;
-                triangles.AddRange(new int[] { a, a + 2, a + 1, a + 1, a + 2, a + 3 });
+                int leftIndex = pointNumber * 2;
+                triangles.AddRange(new int[] { leftIndex, leftIndex + 2, leftIndex + 1, leftIndex + 1, leftIndex + 2, leftIndex + 3 });
 
-                angle += (Mathf.PerlinNoise(pointIndex * curveSmoothness, seed) - 0.5f) * 2f * curveStrength;
+                float turn = (Mathf.PerlinNoise(pointIndex * curveSmoothness, seed) - 0.5f) * 2f * curveStrength;
+                angle = Mathf.Clamp(angle + turn, -maximumTurnAngle, maximumTurnAngle);
+
                 localPosition += forward * distanceBetweenPoints;
                 pointIndex++;
             }
@@ -87,7 +91,7 @@ public class InfiniteRoad : MonoBehaviour
 
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
-        mesh.uv = uvs;
+        mesh.uv = textureCoordinates;
         mesh.triangles = triangles.ToArray();
         mesh.RecalculateNormals();
 
@@ -106,13 +110,13 @@ public class InfiniteRoad : MonoBehaviour
 
     void Decorate(Transform chunk, Vector3[] vertices)
     {
-        for (int i = 0; i + 2 <= pointsPerChunk; i += 2)
+        for (int pointNumber = 0; pointNumber + 2 <= pointsPerChunk; pointNumber += 2)
         {
             for (int side = 0; side < 2; side++)
             {
-                Vector3 start = vertices[i * 2 + side];
-                Vector3 end = vertices[(i + 2) * 2 + side];
-                Vector3 otherSide = vertices[i * 2 + 1 - side];
+                Vector3 start = vertices[pointNumber * 2 + side];
+                Vector3 end = vertices[(pointNumber + 2) * 2 + side];
+                Vector3 otherSide = vertices[pointNumber * 2 + 1 - side];
                 Vector3 outward = (start - otherSide).normalized;
 
                 CreateBarrier(chunk, start + outward * 0.3f, end + outward * 0.3f);
@@ -126,6 +130,7 @@ public class InfiniteRoad : MonoBehaviour
     void CreateBarrier(Transform chunk, Vector3 start, Vector3 end)
     {
         GameObject barrier = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        barrier.tag = wallTag;
         barrier.transform.SetParent(chunk, false);
         barrier.transform.localPosition = (start + end) / 2 + Vector3.up * barrierHeight / 2;
         barrier.transform.localRotation = Quaternion.LookRotation(end - start);

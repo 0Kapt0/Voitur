@@ -35,6 +35,16 @@
                     "interactions": "",
                     "initialStateCheck": true,
                     "priority": 0
+                },
+                {
+                    "name": "RadioChange",
+                    "type": "Button",
+                    "id": "08dcd2e6-148a-46d3-be27-a981562d64a3",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -167,6 +177,17 @@
                     "processors": "AxisDeadzone",
                     "groups": "",
                     "action": "Steer",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3fd5adf9-3386-4fe7-8cc5-d27bafc4bb2a",
+                    "path": "<Keyboard>/upArrow",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RadioChange",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
@@ -349,6 +370,56 @@
                     "action": "Up/Down",
                     "isComposite": false,
                     "isPartOfComposite": true
+                }
+            ]
+        },
+        {
+            "name": "Train",
+            "id": "697d1cf2-9dec-403e-88f5-77c2dd12ce41",
+            "actions": [
+                {
+                    "name": "Accel",
+                    "type": "Button",
+                    "id": "d407f9e7-d03d-46eb-a712-7724b17304f4",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                },
+                {
+                    "name": "Brake",
+                    "type": "Button",
+                    "id": "318d17e7-453f-4ede-950d-012062103e95",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "13d8c85e-b32c-48c5-9932-c97d1ece7a83",
+                    "path": "<Keyboard>/w",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Accel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a24a3dc9-7816-4d8f-b01f-c287aa054408",
+                    "path": "<Keyboard>/s",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Brake",
+                    "isComposite": false,
+                    "isPartOfComposite": false
                 }
             ]
         }

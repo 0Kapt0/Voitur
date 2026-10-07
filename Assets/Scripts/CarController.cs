@@ -1,7 +1,6 @@
 using UnityEngine;
-using UnityEngine.Experimental.GlobalIllumination;
-//using UnityEngine.UIElements;
 using UnityEngine.UI;
+using TMPro;
 
 public class CarController : MonoBehaviour
 {
@@ -19,7 +18,20 @@ public class CarController : MonoBehaviour
     public Transform _backLeftWheelTransform;
     public Transform _backRightWheelTransform;
 
+    [System.Serializable]
+    public class RadioTrack
+    {
+        public AudioClip clip;
+
+        [Range(0f, 1f)]
+        public float volume = 1f;
+    }
+
+
     public AudioSource _radio;
+    public RadioTrack[] _radioTracks;
+
+    private int _currentTrackIndex;
 
     public Rigidbody _rigidBody;
 
@@ -27,7 +39,14 @@ public class CarController : MonoBehaviour
     public Light _rightPointLight;
 
     public Image _arrowSpeed;
-    public Image _boy;
+    public RawImage _boy;
+
+    public TMP_Text _musicNameText;
+    public float _scrollSpeed = 80f;
+    public RectTransform _musicNameZone;
+
+    private float _scrollOffset;
+    private float _musicNameWidth;
 
     private Quaternion _frontLeftOffset;
     private Quaternion _frontRightOffset;
@@ -65,6 +84,7 @@ public class CarController : MonoBehaviour
         _frontRightOffset = GetOffset(_frontRightWheelCollider, _frontRightWheelTransform);
         _backRightOffset = GetOffset(_backRightWheelCollider, _backRightWheelTransform);
         _backLeftOffset = GetOffset(_backLeftWheelCollider, _backLeftWheelTransform);
+        PlayCurrentTrack();
 
     }
 
@@ -79,6 +99,11 @@ public class CarController : MonoBehaviour
         _horizontalInput = _controls.Car.Steer.ReadValue<float>();
         _verticalInput = _controls.Car.Throttle.ReadValue<float>();
         _isBraking = _controls.Car.Brake.IsPressed();
+
+        if (_controls.Car.RadioChange.WasPressedThisFrame())
+        {
+            ChangeRadioTrack();
+        }
 
     }
 
@@ -126,6 +151,65 @@ public class CarController : MonoBehaviour
         _radio.volume = Mathf.Lerp(Mathf.Clamp(_carSpeed * 0.01f, 0.05f, 0.4f), _radio.volume, Time.deltaTime);
 
     }
+
+    private void ChangeRadioTrack()
+    {
+        if (_radioTracks.Length == 0) return;
+
+        _currentTrackIndex = (_currentTrackIndex + 1) % _radioTracks.Length;
+
+        PlayCurrentTrack();
+    }
+
+
+    private void PlayCurrentTrack()
+    {
+        if (_radioTracks.Length == 0) return;
+
+        RadioTrack currentTrack = _radioTracks[_currentTrackIndex];
+
+        _radio.clip = currentTrack.clip;
+        _radio.volume = currentTrack.volume;
+
+        _radio.Play();
+
+        _musicNameText.text = _radio.clip.name;
+        ResetMusicNamePosition();
+    }
+
+    private void ResetMusicNamePosition()
+    {
+        _musicNameWidth = _musicNameText.preferredWidth;
+        _scrollOffset = _musicNameText.rectTransform.rect.width;
+        ApplyScrollOffset();
+    }
+
+    private void ScrollMusicName()
+    {
+        _scrollOffset -= _scrollSpeed * Time.deltaTime;
+
+        if (_scrollOffset < -_musicNameWidth)
+        {
+            ResetMusicNamePosition();
+            return;
+        }
+
+        ApplyScrollOffset();
+    }
+
+    private void ApplyScrollOffset()
+    {
+        _musicNameText.margin = new Vector4(_scrollOffset, 0f, 0f, 0f);
+    }
+
+    private void PlayNextTrackWhenFinished()
+    {
+        if (!_radio.isPlaying)
+        {
+            ChangeRadioTrack();
+        }
+    }
+
     private void UpdateSingleWheel(WheelCollider wheelCollider, Transform wheelTransform, Quaternion offset)
     {
         wheelCollider.GetWorldPose(out Vector3 pos, out Quaternion rot);
@@ -165,6 +249,8 @@ public class CarController : MonoBehaviour
         UpdateWheels();
         RadioSpeed();
         Speedometer();
+        PlayNextTrackWhenFinished();
+        ScrollMusicName();
     }
 
     private void FixedUpdate()

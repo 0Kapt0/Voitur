@@ -121,6 +121,16 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""initialStateCheck"": true,
                     ""priority"": 0
+                },
+                {
+                    ""name"": ""RadioChange"",
+                    ""type"": ""Button"",
+                    ""id"": ""08dcd2e6-148a-46d3-be27-a981562d64a3"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
                 }
             ],
             ""bindings"": [
@@ -253,6 +263,17 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""processors"": ""AxisDeadzone"",
                     ""groups"": """",
                     ""action"": ""Steer"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3fd5adf9-3386-4fe7-8cc5-d27bafc4bb2a"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RadioChange"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -437,6 +458,56 @@ public partial class @Controls: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": true
                 }
             ]
+        },
+        {
+            ""name"": ""Train"",
+            ""id"": ""697d1cf2-9dec-403e-88f5-77c2dd12ce41"",
+            ""actions"": [
+                {
+                    ""name"": ""Accel"",
+                    ""type"": ""Button"",
+                    ""id"": ""d407f9e7-d03d-46eb-a712-7724b17304f4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                },
+                {
+                    ""name"": ""Brake"",
+                    ""type"": ""Button"",
+                    ""id"": ""318d17e7-453f-4ede-950d-012062103e95"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false,
+                    ""priority"": 0
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""13d8c85e-b32c-48c5-9932-c97d1ece7a83"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Accel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a24a3dc9-7816-4d8f-b01f-c287aa054408"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Brake"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
         }
     ],
     ""controlSchemes"": []
@@ -446,18 +517,24 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         m_Car_Brake = m_Car.FindAction("Brake", throwIfNotFound: true);
         m_Car_Throttle = m_Car.FindAction("Throttle", throwIfNotFound: true);
         m_Car_Steer = m_Car.FindAction("Steer", throwIfNotFound: true);
+        m_Car_RadioChange = m_Car.FindAction("RadioChange", throwIfNotFound: true);
         // Helicopter
         m_Helicopter = asset.FindActionMap("Helicopter", throwIfNotFound: true);
         m_Helicopter_Roll = m_Helicopter.FindAction("Roll", throwIfNotFound: true);
         m_Helicopter_Pitch = m_Helicopter.FindAction("Pitch", throwIfNotFound: true);
         m_Helicopter_Yaw = m_Helicopter.FindAction("Yaw", throwIfNotFound: true);
         m_Helicopter_UpDown = m_Helicopter.FindAction("Up/Down", throwIfNotFound: true);
+        // Train
+        m_Train = asset.FindActionMap("Train", throwIfNotFound: true);
+        m_Train_Accel = m_Train.FindAction("Accel", throwIfNotFound: true);
+        m_Train_Brake = m_Train.FindAction("Brake", throwIfNotFound: true);
     }
 
     ~@Controls()
     {
         UnityEngine.Debug.Assert(!m_Car.enabled, "This will cause a leak and performance issues, Controls.Car.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Helicopter.enabled, "This will cause a leak and performance issues, Controls.Helicopter.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Train.enabled, "This will cause a leak and performance issues, Controls.Train.Disable() has not been called.");
     }
 
     /// <summary>
@@ -536,6 +613,7 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     private readonly InputAction m_Car_Brake;
     private readonly InputAction m_Car_Throttle;
     private readonly InputAction m_Car_Steer;
+    private readonly InputAction m_Car_RadioChange;
     /// <summary>
     /// Provides access to input actions defined in input action map "Car".
     /// </summary>
@@ -559,6 +637,10 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Car/Steer".
         /// </summary>
         public InputAction @Steer => m_Wrapper.m_Car_Steer;
+        /// <summary>
+        /// Provides access to the underlying input action "Car/RadioChange".
+        /// </summary>
+        public InputAction @RadioChange => m_Wrapper.m_Car_RadioChange;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -594,6 +676,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Steer.started += instance.OnSteer;
             @Steer.performed += instance.OnSteer;
             @Steer.canceled += instance.OnSteer;
+            @RadioChange.started += instance.OnRadioChange;
+            @RadioChange.performed += instance.OnRadioChange;
+            @RadioChange.canceled += instance.OnRadioChange;
         }
 
         /// <summary>
@@ -614,6 +699,9 @@ public partial class @Controls: IInputActionCollection2, IDisposable
             @Steer.started -= instance.OnSteer;
             @Steer.performed -= instance.OnSteer;
             @Steer.canceled -= instance.OnSteer;
+            @RadioChange.started -= instance.OnRadioChange;
+            @RadioChange.performed -= instance.OnRadioChange;
+            @RadioChange.canceled -= instance.OnRadioChange;
         }
 
         /// <summary>
@@ -776,6 +864,113 @@ public partial class @Controls: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="HelicopterActions" /> instance referencing this action map.
     /// </summary>
     public HelicopterActions @Helicopter => new HelicopterActions(this);
+
+    // Train
+    private readonly InputActionMap m_Train;
+    private List<ITrainActions> m_TrainActionsCallbackInterfaces = new List<ITrainActions>();
+    private readonly InputAction m_Train_Accel;
+    private readonly InputAction m_Train_Brake;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Train".
+    /// </summary>
+    public struct TrainActions
+    {
+        private @Controls m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public TrainActions(@Controls wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "Train/Accel".
+        /// </summary>
+        public InputAction @Accel => m_Wrapper.m_Train_Accel;
+        /// <summary>
+        /// Provides access to the underlying input action "Train/Brake".
+        /// </summary>
+        public InputAction @Brake => m_Wrapper.m_Train_Brake;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Train; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="TrainActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(TrainActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="TrainActions" />
+        public void AddCallbacks(ITrainActions instance)
+        {
+            if (instance == null || m_Wrapper.m_TrainActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_TrainActionsCallbackInterfaces.Add(instance);
+            @Accel.started += instance.OnAccel;
+            @Accel.performed += instance.OnAccel;
+            @Accel.canceled += instance.OnAccel;
+            @Brake.started += instance.OnBrake;
+            @Brake.performed += instance.OnBrake;
+            @Brake.canceled += instance.OnBrake;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="TrainActions" />
+        private void UnregisterCallbacks(ITrainActions instance)
+        {
+            @Accel.started -= instance.OnAccel;
+            @Accel.performed -= instance.OnAccel;
+            @Accel.canceled -= instance.OnAccel;
+            @Brake.started -= instance.OnBrake;
+            @Brake.performed -= instance.OnBrake;
+            @Brake.canceled -= instance.OnBrake;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="TrainActions.UnregisterCallbacks(ITrainActions)" />.
+        /// </summary>
+        /// <seealso cref="TrainActions.UnregisterCallbacks(ITrainActions)" />
+        public void RemoveCallbacks(ITrainActions instance)
+        {
+            if (m_Wrapper.m_TrainActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="TrainActions.AddCallbacks(ITrainActions)" />
+        /// <seealso cref="TrainActions.RemoveCallbacks(ITrainActions)" />
+        /// <seealso cref="TrainActions.UnregisterCallbacks(ITrainActions)" />
+        public void SetCallbacks(ITrainActions instance)
+        {
+            foreach (var item in m_Wrapper.m_TrainActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_TrainActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="TrainActions" /> instance referencing this action map.
+    /// </summary>
+    public TrainActions @Train => new TrainActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Car" which allows adding and removing callbacks.
     /// </summary>
@@ -804,6 +999,13 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSteer(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "RadioChange" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnRadioChange(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Helicopter" which allows adding and removing callbacks.
@@ -840,5 +1042,27 @@ public partial class @Controls: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnUpDown(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Train" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="TrainActions.AddCallbacks(ITrainActions)" />
+    /// <seealso cref="TrainActions.RemoveCallbacks(ITrainActions)" />
+    public interface ITrainActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Accel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAccel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Brake" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnBrake(InputAction.CallbackContext context);
     }
 }

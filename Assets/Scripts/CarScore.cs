@@ -3,22 +3,25 @@ using TMPro;
 
 public class CarScore : MonoBehaviour
 {
-    [Header("Références")]
-    [SerializeField] private Rigidbody carRigidbody;
-    [SerializeField] private TMP_Text scoreText;
-    [SerializeField] private TMP_Text multiplierText;
+    [Header("References")]
+    [SerializeField] private Rigidbody _carRigidbody;
+    [SerializeField] private TMP_Text _scoreText;
+    [SerializeField] private TMP_Text _multiplierText;
 
-    [Header("Réglages du score")]
-    [SerializeField] private float minimumHighSpeed = 25f;
-    [SerializeField] private float pointsPerSecond = 100f;
+    [Header("Score settings")]
+    [SerializeField] private float _minimumHighSpeed = 25f;
+    [SerializeField] private float _pointsPerSecond = 100f;
 
-    [Header("Réglages du multiplicateur")]
-    [SerializeField] private float multiplierIncreaseTime = 3f;
-    [SerializeField] private float maximumMultiplier = 10f;
-    [SerializeField] private float multiplierDecreaseSpeed = 2f;
+    [Header("Multiplier settings")]
+    [SerializeField] private float _multiplierIncreaseTime = 3f;
+    [SerializeField] private float _maximumMultiplier = 10f;
+    [SerializeField] private float _multiplierDecreaseSpeed = 2f;
 
+    [Header("Collision")]
+    [SerializeField] private string _wallTag = "Wall";
+
+    private Controls controls; // le nom de ta classe générée
     private float score;
-    private float highSpeedTime;
     private float multiplier = 1f;
 
     public float Score => score;
@@ -26,51 +29,84 @@ public class CarScore : MonoBehaviour
 
     private void Awake()
     {
-        if (carRigidbody == null)
+        controls = new Controls();
+
+        if (_carRigidbody == null)
         {
-            carRigidbody = GetComponent<Rigidbody>();
+            _carRigidbody = GetComponent<Rigidbody>();
         }
+    }
+
+    private void OnEnable()
+    {
+        controls.Car.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Car.Disable();
     }
 
     private void FixedUpdate()
     {
-        float speedInKmh = carRigidbody.linearVelocity.magnitude * 3.6f;
+        UpdateMultiplier();
+        UpdateScore();
+        UpdateUI();
+    }
 
-        if (speedInKmh >= minimumHighSpeed)
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag(_wallTag))
         {
-            highSpeedTime += Time.fixedDeltaTime;
+            ResetMultiplier();
+        }
+    }
 
-            multiplier = Mathf.Clamp(1f + highSpeedTime / multiplierIncreaseTime, 1f, maximumMultiplier);
-            float speedBonus = speedInKmh / minimumHighSpeed;
-            score += pointsPerSecond * speedBonus * multiplier * Time.fixedDeltaTime;
+    private void UpdateMultiplier()
+    {
+        bool isThrottlePressed = controls.Car.Throttle.ReadValue<float>() > 0f;
+
+        if (isThrottlePressed)
+        {
+            multiplier = Mathf.Min(multiplier + Time.fixedDeltaTime / _multiplierIncreaseTime, _maximumMultiplier);
         }
         else
         {
-            highSpeedTime = 0f;
-
-            multiplier = Mathf.MoveTowards(multiplier, 1f, multiplierDecreaseSpeed * Time.fixedDeltaTime);
+            multiplier = Mathf.MoveTowards(multiplier, 1f, _multiplierDecreaseSpeed * Time.fixedDeltaTime);
         }
+    }
 
-        UpdateUI();
+    private void UpdateScore()
+    {
+        float speedInKmh = _carRigidbody.linearVelocity.magnitude * 3.6f;
+
+        if (speedInKmh < _minimumHighSpeed) return;
+
+        float speedBonus = speedInKmh / _minimumHighSpeed;
+        score += _pointsPerSecond * speedBonus * multiplier * Time.fixedDeltaTime;
+    }
+
+    private void ResetMultiplier()
+    {
+        multiplier = 1f;
     }
 
     private void UpdateUI()
     {
-        if (scoreText != null)
+        if (_scoreText != null)
         {
-            scoreText.text = $"Score : {Mathf.FloorToInt(score)}";
+            _scoreText.text = $"Score : {Mathf.FloorToInt(score)}";
         }
 
-        if (multiplierText != null)
+        if (_multiplierText != null)
         {
-            multiplierText.text = $"x{multiplier:0.0}";
+            _multiplierText.text = $"x{multiplier:0.0}";
         }
     }
 
     public void ResetScore()
     {
         score = 0f;
-        highSpeedTime = 0f;
-        multiplier = 1f;
+        ResetMultiplier();
     }
 }
