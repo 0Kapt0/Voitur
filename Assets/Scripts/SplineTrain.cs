@@ -26,6 +26,8 @@ public class TrainController : MonoBehaviour
     public float Danger => _danger;
     public bool IsDerailed => _isDerailed;
 
+    public float Progress => _distance / _splineLength;
+
     private Controls _controls;
     private float _splineLength;
     private float _distance;

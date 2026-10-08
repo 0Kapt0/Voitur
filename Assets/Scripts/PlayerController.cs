@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
 
     private bool invertYAxis = false;
 
+    private Controls controls;
     private Camera mainCam;
     private Rigidbody rb;
     private CapsuleCollider coll;
@@ -38,9 +39,10 @@ public class PlayerController : MonoBehaviour
     private Quaternion upperLimit;
     private Quaternion bottomLimit;
 
-
     void Awake()
     {
+        controls = new Controls();
+
         rb = GetComponent<Rigidbody>();
         coll = GetComponent<CapsuleCollider>();
         mainCam = GetComponentInChildren<Camera>();
@@ -58,6 +60,16 @@ public class PlayerController : MonoBehaviour
         bottomLimit = Quaternion.Euler(80, 0, 0);
     }
 
+    private void OnEnable()
+    {
+        controls.Player.Enable();
+    }
+
+    private void OnDisable()
+    {
+        controls.Player.Disable();
+    }
+
     void headbob()
     {
         if (rb.linearVelocity.magnitude > 0.01f)
@@ -71,14 +83,24 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
+    {
+        LockCursor();
+        headbob();
+        CheckGround();
+        TrackSpeed();
+        GetInput();
+        Look();
+    }
+
+    private void LockCursor()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = true;
+    }
 
-        headbob();
-
+    private void CheckGround()
+    {
         grounded = false;
         if (Physics.SphereCast(originTsfm.position, coll.radius, -transform.up, out RaycastHit hit, 2f, LayerMask.GetMask("Ground", "BouncingPad")))
         {
@@ -98,35 +120,29 @@ public class PlayerController : MonoBehaviour
                 jumping = false;
             }
         }
+    }
 
+    private void TrackSpeed()
+    {
         float speed = (transform.position - prevPos).magnitude;
         prevPos = transform.position;
+    }
 
-        if (Input.GetKey(KeyCode.W))
-        {
-            moveX = transform.forward;
-        }
-        else if (Input.GetKey(KeyCode.S))
-        {
-            moveX = -transform.forward;
-        }
+    private void GetInput()
+    {
+        Vector2 moveInput = controls.Player.Move.ReadValue<Vector2>();
+        moveX = transform.forward * moveInput.y;
+        moveY = transform.right * moveInput.x;
 
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            moveY = -transform.right;
-        }
-        else if (Input.GetKey(KeyCode.D))
-        {
-            moveY = transform.right;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (controls.Player.Jump.WasPressedThisFrame())
         {
             jump = true;
         }
+    }
 
-        Vector3 mouseDelta = Input.mousePositionDelta * sensitivity;
+    private void Look()
+    {
+        Vector2 mouseDelta = controls.Player.Look.ReadValue<Vector2>() * sensitivity;
         transform.rotation *= Quaternion.Euler(0, rotationSpeed * (mouseDelta.x / Screen.width) * Time.deltaTime, 0);
 
         if (!invertYAxis)
@@ -137,9 +153,6 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        //rb.MovePosition(rb.position + (moveX + moveY).normalized * moveSpeed * Time.deltaTime);
-        //todo rb.MoveRotation();
-
         if (jump)
         {
             if (!jumping)
@@ -162,18 +175,10 @@ public class PlayerController : MonoBehaviour
             if (grounded)
             {
                 rb.linearVelocity = (moveX + moveY).normalized * moveSpeed * Time.deltaTime;
-                //rb.AddForce((moveX + moveY).normalized * moveSpeed * Time.deltaTime, ForceMode.Force);
 
                 moveX = Vector3.zero;
                 moveY = Vector3.zero;
             }
-            /*else
-            {
-                rb.linearVelocity = (moveX + moveY).normalized * airMoveSpeed * Time.deltaTime;
-                //rb.AddForce((moveX + moveY).normalized * airMoveSpeed * Time.deltaTime, ForceMode.Force);
-
-                rb.AddForce(Vector3.down * additionalGravity, ForceMode.Force);
-            }*/
         }
     }
 }

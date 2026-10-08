@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2654623969273368890}
   - component: {fileID: 5446844366744518696}
   - component: {fileID: 6241245219032403869}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Rail
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,7 @@ GameObject:
   - component: {fileID: 8552932066713871832}
   - component: {fileID: 2274549367266968649}
   - component: {fileID: 5957960494609775592}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}

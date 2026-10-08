@@ -76,6 +76,9 @@ public class CarController : MonoBehaviour
     private void OnDisable()
     {
         _controls.Disable();
+        _verticalInput = 0f;
+        _isBraking = true;
+        HandleMotor();
     }
 
     private void Start()
