@@ -54,16 +54,6 @@ public class TrainController : MonoBehaviour
         _splineLength = _spline.CalculateLength();
     }
 
-    private void Update()
-    {
-        if (_isDerailed) return;
-
-        UpdateSpeed();
-        MoveAlongSpline();
-        UpdateTransform();
-        CheckDerailment();
-    }
-
     private void MoveAlongSpline()
     {
         _distance = Mathf.Repeat(_distance + _speed * Time.deltaTime, _splineLength);
@@ -133,5 +123,15 @@ public class TrainController : MonoBehaviour
         body.mass = 5000f;
         body.linearVelocity = transform.forward * _speed;
         body.AddTorque(transform.forward * _speed * 200f, ForceMode.Impulse);
+    }
+
+    private void Update()
+    {
+        if (_isDerailed) return;
+
+        UpdateSpeed();
+        MoveAlongSpline();
+        UpdateTransform();
+        CheckDerailment();
     }
 }

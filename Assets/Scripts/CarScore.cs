@@ -47,13 +47,6 @@ public class CarScore : MonoBehaviour
         controls.Car.Disable();
     }
 
-    private void FixedUpdate()
-    {
-        UpdateMultiplier();
-        UpdateScore();
-        UpdateUI();
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag(_wallTag))
@@ -109,4 +102,12 @@ public class CarScore : MonoBehaviour
         score = 0f;
         ResetMultiplier();
     }
+
+    private void FixedUpdate()
+    {
+        UpdateMultiplier();
+        UpdateScore();
+        UpdateUI();
+    }
+
 }
