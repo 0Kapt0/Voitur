@@ -39,6 +39,9 @@ public class PlayerController : MonoBehaviour
     private Quaternion upperLimit;
     private Quaternion bottomLimit;
 
+    private float verticalRotation = 0f;
+    private float upDownLookRange = 80f;
+
     void Awake()
     {
         controls = new Controls();
@@ -142,13 +145,21 @@ public class PlayerController : MonoBehaviour
 
     private void Look()
     {
-        Vector2 mouseDelta = controls.Player.Look.ReadValue<Vector2>() * sensitivity;
-        transform.rotation *= Quaternion.Euler(0, rotationSpeed * (mouseDelta.x / Screen.width) * Time.deltaTime, 0);
+        //Vector2 mouseDelta = controls.Player.Look.ReadValue<Vector2>() * sensitivity;
+        //transform.rotation *= Quaternion.Euler(0, rotationSpeed * (mouseDelta.x / Screen.width) * Time.deltaTime, 0);
 
-        if (!invertYAxis)
-            mouseDelta.y = -mouseDelta.y;
+        //if (!invertYAxis)
+        //    mouseDelta.y = -mouseDelta.y;
 
-        mainCam.transform.rotation *= Quaternion.Euler(rotationSpeed * (mouseDelta.y / Screen.height) * Time.deltaTime, 0, 0);
+        //mainCam.transform.rotation *= Quaternion.Euler(rotationSpeed * (Mathf.Clamp(mouseDelta.y, 80, -80) / Screen.height) * Time.deltaTime, 0, 0); 
+        Vector2 lookInput = controls.Player.Look.ReadValue<Vector2>();
+
+        transform.Rotate(Vector3.up * lookInput.x * sensitivity);
+
+        verticalRotation -= lookInput.y * sensitivity;
+        verticalRotation = Mathf.Clamp(verticalRotation, -upDownLookRange, upDownLookRange);
+
+        mainCam.transform.localRotation = Quaternion.Euler(verticalRotation, 0f, 0f);
     }
 
     private void FixedUpdate()

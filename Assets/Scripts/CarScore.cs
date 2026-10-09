@@ -20,7 +20,7 @@ public class CarScore : MonoBehaviour
     [Header("Collision")]
     [SerializeField] private string _wallTag = "Wall";
 
-    private Controls controls; // le nom de ta classe générée
+    private Controls controls;
     private float score;
     private float multiplier = 1f;
 
